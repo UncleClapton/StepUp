@@ -1,57 +1,71 @@
 package com.nottoomanyitems.stepup.Client;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.nottoomanyitems.stepup.StepUp;
-import com.nottoomanyitems.stepup.worker.StepChanger;
 
-import net.minecraft.client.Minecraft;
+import com.nottoomanyitems.stepup.config.StepUpConfig;
+import com.nottoomanyitems.stepup.util.HudMode;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(value = Dist.CLIENT,  modid = StepUp.MODID)
+@EventBusSubscriber(modid = StepUp.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
-	public static boolean init = true;
-	private static final Logger LOGGER = LogManager.getLogger("StepUp");
-	
-	@SubscribeEvent(priority= EventPriority.NORMAL, receiveCanceled=true)
+	public static boolean init = false;
+	private static StepChanger worker;
+
+    public static void init () {
+        worker = new StepChanger();
+    }
+
+    @SubscribeEvent(priority= EventPriority.NORMAL, receiveCanceled=true)
     public static void clientTickEvent(final PlayerTickEvent event) {
-    	if (event.player != null) {
-    		StepChanger.TickEvent(event);
-    	}
-    	if (Minecraft.getInstance().isGameFocused() && init == true) {
-    		init=false;
-    		StepChanger.init();
-    	}
+        if (!init) {
+            return;
+        }
+
+        if (event.player == null) {
+            return;
+        }
+
+        worker.TickEvent(event);
     }
     
     @SubscribeEvent
-    public static void onKeyInput(KeyInputEvent event) {
-    	StepChanger.onKeyInput(event);
+    public static void onKeyInput(KeyInputEvent e) {
+        if (!init) {
+            return;
+        }
+
+        worker.onKeyInput();
     }
-    
-    
+
     @SubscribeEvent
-    public static void joinWorld(final EntityJoinWorldEvent event) {
+    public static void onWorldJoin(WorldEvent.Load e) {
+        init = true;
+        worker.init();
     }
-    
+
     @SubscribeEvent
-    public static void unload (WorldEvent.Unload event) {
-    	LOGGER.info("WorldEvent.Unload");
-    	init=true;
-    }
-    
-    @SubscribeEvent
-    public static void load (WorldEvent.Load event) {
-    	LOGGER.info("WorldEvent.Load");
+    public static void onOverlayRender(RenderGameOverlayEvent.Post event) {
+        if (!init || event.isCanceled()) {
+            return;
+        }
+
+        if (StepUpConfig.hudMode == HudMode.NEVER) {
+            return;
+        }
+
+        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) {
+            return;
+        }
+
+        worker.drawOverlay(event);
     }
 }

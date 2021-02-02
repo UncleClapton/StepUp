@@ -1,4 +1,4 @@
-package com.nottoomanyitems.stepup.init;
+package com.nottoomanyitems.stepup.Client;
 
 import com.nottoomanyitems.stepup.StepUp;
 import net.minecraft.client.settings.KeyBinding;
@@ -12,11 +12,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = StepUp.MODID, bus = Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = StepUp.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class KeyBindings {
 
     public static final KeyBinding[] KEYBINDINGS = {
-        new KeyBinding("key.stepup.desc", GLFW.GLFW_KEY_H, "key.categories.stepup")
+        new KeyBinding("key.stepupplus.desc", GLFW.GLFW_KEY_H, "key.categories.stepupplus")
     };
 
     @SubscribeEvent

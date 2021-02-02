@@ -1,18 +1,18 @@
 modLoader="javafml"
 loaderVersion="[35,)"
-#issueTrackerURL="http://my.issue.tracker/"
+issueTrackerURL="https://github.com/UncleClapton/StepUp"
 license="All rights reversed"
 
 [[mods]]
-modId="stepup"
+modId="stepupplus"
 version="${version}"
 state="Working"
-displayName="StepUp"
-#updateJSONURL="http://myurl.me/"
+displayName="StepUpPlus"
+updateJSONURL="https://github.com/UncleClapton/StepUp/raw/master/update.json"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/stepup"
 logoFile="logo.png"
-credits="NotTooManyItems, frakier, Emirhangg, Bletch1971"
-authors="NotTooManyItems"
+credits="NotTooManyItems, frakier, Emirhangg, Bletch1971, UncleClapton"
+authors="UncleClapton"
 description='''
 3 options allow you to choose between no auto jump, Minecraft auto jump, and StepUp auto jump
 '''
@@ -27,6 +27,6 @@ side="BOTH"
 [[dependencies.stepup]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.16.4,1.17)"
+versionRange="[1.16.4,)"
 ordering="NONE"
 side="CLIENT"

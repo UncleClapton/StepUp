@@ -1,37 +1,37 @@
 package com.nottoomanyitems.stepup;
 
-import net.minecraftforge.fml.DistExecutor;
+import com.nottoomanyitems.stepup.Client.ClientEvents;
+import com.nottoomanyitems.stepup.config.StepUpConfig;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 
-import com.nottoomanyitems.stepup.Client.ClientProxy;
-import com.nottoomanyitems.stepup.Server.ServerProxy;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
-@Mod(StepUp.MODID)
-@EventBusSubscriber(modid = StepUp.MODID, bus = Bus.MOD)
+@Mod(StepUp.MOD_ID)
 public final class StepUp {
-    public static final String MODID = "stepup";
-  
-	public static final String MOD_VERSION = "1.16.4-0.2.0";
-	public static final String MOD_NAME = "StepUp";
-	public static String MC_VERSION;
-	
-	public static final StepUpProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final String MOD_ID = "stepupplus";
+	public static final String MOD_NAME = "StepUpPlus";
 	
 	public StepUp() {
+		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+
+		if (FMLEnvironment.dist != Dist.CLIENT) {
+			LogManager.getLogger(StepUp.MOD_ID).log(Level.ERROR, "You tried loading " + MOD_NAME + " on a dedicated server! This is a client side only mod!");
+			return;
+		}
+
+		init();
     }
-	
-	@SubscribeEvent
-	public static void onConfigLoading(final ModConfig.Loading e){
-	}
-	
-	@SubscribeEvent
-	public static void onLoadComplete(final FMLLoadCompleteEvent e){
-		proxy.onLoaded(e);
+
+    private void init () {
+		StepUpConfig.init();
+		ClientEvents.init();
 	}
 }
