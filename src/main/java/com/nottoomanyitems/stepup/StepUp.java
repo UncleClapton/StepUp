@@ -20,6 +20,8 @@ public final class StepUp {
 	public static final String MOD_NAME = "StepUpPlus";
 	
 	public StepUp() {
+		// From: https://mcforge.readthedocs.io/en/latest/concepts/sides/
+		// Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
 		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 
 		if (FMLEnvironment.dist != Dist.CLIENT) {
@@ -27,11 +29,7 @@ public final class StepUp {
 			return;
 		}
 
-		init();
-    }
-
-    private void init () {
 		StepUpConfig.init();
 		ClientEvents.init();
-	}
+    }
 }

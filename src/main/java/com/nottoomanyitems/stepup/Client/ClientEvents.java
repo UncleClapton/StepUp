@@ -1,9 +1,10 @@
 package com.nottoomanyitems.stepup.Client;
 
+import com.nottoomanyitems.stepup.Client.worker.StepChanger;
 import com.nottoomanyitems.stepup.StepUp;
 
 import com.nottoomanyitems.stepup.config.StepUpConfig;
-import com.nottoomanyitems.stepup.util.HudMode;
+import com.nottoomanyitems.stepup.config.HudMode;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
@@ -24,17 +25,15 @@ public class ClientEvents {
         worker = new StepChanger();
     }
 
-    @SubscribeEvent(priority= EventPriority.NORMAL, receiveCanceled=true)
-    public static void clientTickEvent(final PlayerTickEvent event) {
-        if (!init) {
+    @SubscribeEvent(receiveCanceled = true)
+    public static void clientTickEvent(PlayerTickEvent event) {
+        if (!init
+                || event.player == null
+        ) {
             return;
         }
 
-        if (event.player == null) {
-            return;
-        }
-
-        worker.TickEvent(event);
+        worker.onPlayerTick(event);
     }
     
     @SubscribeEvent
@@ -52,17 +51,13 @@ public class ClientEvents {
         worker.init();
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onOverlayRender(RenderGameOverlayEvent.Post event) {
-        if (!init || event.isCanceled()) {
-            return;
-        }
-
-        if (StepUpConfig.hudMode == HudMode.NEVER) {
-            return;
-        }
-
-        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) {
+        if (!init
+                || event.isCanceled()
+                || StepUpConfig.hudMode == HudMode.NEVER
+                || event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR
+        ) {
             return;
         }
 

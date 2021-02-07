@@ -1,15 +1,21 @@
 package com.nottoomanyitems.stepup.config;
 
-import com.nottoomanyitems.stepup.util.HudMode;
+import com.nottoomanyitems.stepup.StepUp;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
+
+@OnlyIn(Dist.CLIENT)
+@EventBusSubscriber(modid = StepUp.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class StepUpConfig {
-    public static boolean defaultJumpState;
+    public static boolean defaultStepUpState;
     public static float stepHeight;
     public static HudMode hudMode;
     public static int hudXOffset;
@@ -18,8 +24,6 @@ public class StepUpConfig {
     private static Pair<ClientConfig, ForgeConfigSpec> configSpecPair;
 
     public static void init() {
-        FMLJavaModLoadingContext.get().getModEventBus().register(StepUpConfig.class);
-
         configSpecPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
 
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
@@ -33,7 +37,7 @@ public class StepUpConfig {
         if (config.getSpec() == configSpecPair.getRight()) {
             ClientConfig nextConf = configSpecPair.getLeft();
 
-            defaultJumpState = nextConf.defaultJumpState.get();
+            defaultStepUpState = nextConf.defaultStepUpState.get();
 
             // Step height is converted to a float with 2 decimals because reasons
             // it is also bound to values between 0.6f and 255.0f
@@ -47,14 +51,14 @@ public class StepUpConfig {
     }
 
     private static class ClientConfig {
-        private final ForgeConfigSpec.BooleanValue defaultJumpState;
+        private final ForgeConfigSpec.BooleanValue defaultStepUpState;
         private final ForgeConfigSpec.DoubleValue stepHeight;
         private final ForgeConfigSpec.ConfigValue<HudMode> hudMode;
         private final ForgeConfigSpec.IntValue hudXOffset;
         private final ForgeConfigSpec.IntValue hudYOffset;
 
         private ClientConfig(ForgeConfigSpec.Builder builder) {
-            defaultJumpState = builder
+            defaultStepUpState = builder
                     .comment("Default state of StepUp when joining a world. (Default: true)")
                     .define("default_state", true);
 

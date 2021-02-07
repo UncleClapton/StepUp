@@ -17,8 +17,8 @@ public class ResourceDrawer {
         uvSize = new Dimension2D(uvWidth, uvHeight);
     }
 
-    public void bindTexture(Minecraft mc) {
-        mc.getTextureManager().bindTexture(location);
+    public void bindTexture() {
+        Minecraft.getInstance().getTextureManager().bindTexture(location);
     }
 
     public void drawResourceAtPos (MatrixStack matrixStack, int x, int y, int column, int row) {
